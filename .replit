@@ -1,0 +1,12 @@
+run = "stack build"
+language = "nix"
+
+[nix]
+channel = "stable-24_05"
+
+[env]
+LD_LIBRARY_PATH = "/run/current-system/sw/lib"
+
+[[ports]]
+localPort = 8080
+externalPort = 80
