@@ -53,6 +53,16 @@ ghc-options:
 library:
   source-dirs: src
 
+default-extensions:
+  - ScopedTypeVariables
+  - TypeApplications
+  - TypeAbstractions
+  - LambdaCase
+  - TupleSections
+  - FlexibleInstances
+  - MultiParamTypeClasses
+  - ImportQualifiedPost
+
 executables:
   CI4251-exe:
     main:                Main.hs

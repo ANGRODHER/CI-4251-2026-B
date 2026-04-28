@@ -39,8 +39,7 @@
           nativeBuildInputs =
             [ pkgs'.haskellPackages.hpack
               pkgs'.just
-              pkgs'.haskellPackages.Cabal_3_14_2_0
-              pkgs'.haskell.compiler.ghc9124
+              pkgs'.haskell.compiler.ghc912
               (pkgs'.haskell-language-server.override { supportedGhcVersions = [ "912" ]; })
               pkgs'.haskellPackages.hoogle
               pkgs'.stack

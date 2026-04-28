@@ -17,11 +17,13 @@
 #
 # snapshot: ./custom-snapshot.yaml
 # snapshot: https://example.com/snapshots/2024-01-01.yaml
-snapshot: nightly-2026-04-19
+# snapshot: nightly-2026-04-19
+snapshot: nightly-2025-11-15
 # compiler: ghc-9.12.4
 nix:
   enable: false
 system-ghc: true
+install-ghc: false
 extra-lib-dirs:
   - /run/current-system/sw/lib  # if on NixOS
 
