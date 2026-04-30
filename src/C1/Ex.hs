@@ -119,7 +119,14 @@ jingleCompV2 = uncurry ($) . (all . (==) . safeFst 0 &&& id) . fmap measureDurat
  -https://exercism.org/tracks/haskell/exercises/pythagorean-triplet
  -}
 pythagoreanTriplet :: Int -> Maybe (Int, Int, Int)
-pythagoreanTriplet c = [ (a,b,c) | b <- [2..c], a <- [1..b-1], a^2 + b^2 == c^2] !? 0
+pythagoreanTriplet n =
+    [ (a,b,c)
+    | c <- [3..(n-1)]
+    , b <- [2..(c-1)]
+    , a <- [1..(b-1)]
+    , a^2 + b^2 == c^2
+    , a + b + c == n
+    ] !? 0
 
 
 

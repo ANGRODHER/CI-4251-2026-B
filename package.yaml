@@ -62,6 +62,8 @@ default-extensions:
   - FlexibleInstances
   - MultiParamTypeClasses
   - ImportQualifiedPost
+  - InstanceSigs
+  - KindSignatures
 
 executables:
   CI4251-exe:

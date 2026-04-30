@@ -27,6 +27,7 @@ library
   exposed-modules:
       C1.Ex
       C1.Ex1
+      C2.Ex
       Lib
       Test1.HW
       Test1.Sol
@@ -45,6 +46,8 @@ library
       FlexibleInstances
       MultiParamTypeClasses
       ImportQualifiedPost
+      InstanceSigs
+      KindSignatures
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       QuickCheck
@@ -84,6 +87,8 @@ executable CI4251-exe
       FlexibleInstances
       MultiParamTypeClasses
       ImportQualifiedPost
+      InstanceSigs
+      KindSignatures
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       CI4251
@@ -125,6 +130,8 @@ test-suite CI4251-test
       FlexibleInstances
       MultiParamTypeClasses
       ImportQualifiedPost
+      InstanceSigs
+      KindSignatures
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       CI4251
