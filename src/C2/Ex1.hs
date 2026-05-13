@@ -4,6 +4,7 @@ module C2.Ex1 where
 
 import Data.Kind
 import Data.Foldable (traverse_)
+import Control.Monad.Free
 
 -- As values have types
 -- types have kinds
@@ -279,14 +280,131 @@ instance (Applicative' f, Applicative' g) => Applicative' (Compose f g)
 
 -- GADT
 -- Existencial Types
-data Ap (f :: Type -> Type) a where
-    Pure    :: a -> Ap f a
-    (:<*>:) :: Ap f (a -> b) -> f a -> Ap f b
+-- data Ap (f :: Type -> Type) a where
+--     Pure    :: a -> Ap f a
+--     (:<*>:) :: Ap f (a -> b) -> f a -> Ap f b
+--
+-- data Ap' (f :: Type -> Type) a where
+--     Pure'    :: a -> Ap' f a
+--     (:<**>:) :: f (a -> b) -> Ap' f a -> Ap' f b
+--
+-- data Ap'' (f :: Type -> Type) a where
+--     Pure''    :: a -> Ap'' f a
+--     (:<***>:) :: Ap'' f (a -> b) -> Ap'' f a -> Ap'' f b
 
-data Ap' (f :: Type -> Type) a where
-    Pure'    :: a -> Ap' f a
-    (:<**>:) :: f (a -> b) -> Ap' f a -> Ap' f b
 
-data Ap'' (f :: Type -> Type) a where
-    Pure''    :: a -> Ap'' f a
-    (:<***>:) :: Ap'' f (a -> b) -> Ap'' f a -> Ap'' f b
+instance Functor Optional where
+    fmap = fmap'
+instance Applicative Optional where
+    pure = pure'
+    (<*>) = (<*$>)
+
+class Applicative f => Monad' (f :: Type -> Type) where
+    (>>>=) :: f a -> (a -> f b) -> f b
+
+instance Monad' Optional where
+    (>>>=) :: Optional a -> (a -> Optional b) -> Optional b
+    -- fa >>>= g = case fa of
+    --     Ok a -> g a
+    --     Null -> Null
+    fa >>>= g = join $ fmap' g fa
+        where
+         join :: Optional (Optional a) -> Optional a
+         join (Ok (Ok a)) = Ok a
+         join Null        = Null
+
+instance Monad Optional where
+    (>>=) = (>>>=)
+
+-- functional core
+-- imperative shell
+sqrt'' :: Double -> Double -> Double -> Optional (Double, Double)
+sqrt'' a b c = do
+   det <- let d = b ** 2 - 4 * a * c in if d >= 0 then Ok d else Null
+   den <- if a == 0 then Null else Ok (2 * a)
+   pure ((-b + det) / den, (-b - det) / den)
+
+sqrt3 :: Double -> Double -> Double -> Optional (Double, Double)
+sqrt3 a b c
+    = (let d = b ** 2 - 4 * a * c in if d >= 0 then Ok d else Null) >>=
+    \det -> (if a == 0 then Null else Ok (2 * a)) >>=
+    \den -> pure ((-b + det) / den, (-b - det) / den)
+
+
+instance Monad' [] where
+    (>>>=) :: [a] -> (a -> [b]) -> [b]
+    xs >>>= f = concat (fmap' f xs)
+
+-- concat :: [[a]] -> [a]
+-- join   :: f (f a) -> f a
+
+
+-- for x in (1,n):
+--     for y in (1,x):
+--         for z in (1, y):
+--             (x,y,z)
+
+increasing :: Int -> [(Int,Int,Int)]
+increasing n = do
+    x <- [1..n]
+    y <- [1..x]
+    z <- [1..y]
+    pure (x,y,z)
+
+
+data Free' (f :: Type -> Type) (a :: Type)
+    = Pure' a
+    | Free' (f (Free' f a))
+
+instance Functor f => Functor (Free' f)
+
+instance Functor f => Applicative (Free' f) where
+    pure = Pure'
+
+-- instance Functor f => Monad (Free' f) where
+--     (>>=) :: Free' f a -> (a -> Free' f b) -> Free' f b
+--     fa >>= g =  join $ fmap g fa
+--         where
+--         join :: Free' f (Free' f a) -> Free' f a
+--         join (Pure' a) = a
+--         join (Free' fa' :: f (Free' f a))
+--             = _ :: Free' f a
+--               Free' f (f a)
+--               Free' (Compose f f) a
+--               Free' f a
+
+data Teletype a
+    = GetLine (String -> a)
+    | PutStrLn String a
+
+instance Functor Teletype where
+    fmap f (PutStrLn s a) = PutStrLn s $ f a
+    fmap f (GetLine r)    = GetLine $ fmap f r
+
+liftF' :: Teletype a -> Free Teletype a
+liftF' (PutStrLn s a) = Free $ PutStrLn s (Pure a)
+liftF' (GetLine sa)   = Free $ GetLine $ fmap Pure sa
+
+putStrLn' :: String -> Free Teletype ()
+putStrLn' s = liftF' $ PutStrLn s ()
+
+getLine' :: Free Teletype String
+getLine' = liftF' $ GetLine id
+
+silly :: Free Teletype ()
+silly = do
+    name <- getLine'
+    putStrLn' $ "hello " <> name <> "!!"
+    surname <- getLine'
+    age <- getLine'
+    putStrLn' $ "Mr. " <> surname <> " is " <> age <> " years old."
+
+printTeletype :: Show a => Free Teletype a -> String
+printTeletype (Pure x) = "pure " <> show x
+printTeletype (Free f) = case f of
+    PutStrLn s a
+        -> let c = printTeletype a
+                in "putStrLn " <> s <> "\n" <> c
+    GetLine sa   -> "getLine\n" <> printTeletype (sa "")
+
+instance Monad (State s) where
