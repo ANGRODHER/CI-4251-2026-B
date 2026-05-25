@@ -1,6 +1,9 @@
 module Main (main) where
 
-import Lib
+-- Importamos tu función desde el archivo de las respuestas
+import Test1.Sol (playChess) 
 
 main :: IO ()
-main = someFunc
+main = do
+    putStrLn "¡Bienvenido a ProFunAVan Chess!"
+    playChess
