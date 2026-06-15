@@ -1,4 +1,4 @@
-module Test2.Sol where
+module Test2.TypeChecker where
 
 
 runL :: FilePath -> IO ()

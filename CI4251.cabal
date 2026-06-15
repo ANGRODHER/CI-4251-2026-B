@@ -29,8 +29,16 @@ library
       C2.Ex
       C2.Ex1
       C2.Ex2
+      C3.Ex
+      C3.Ex1
+      C3.Matchers
+      C3.Patterns
+      C4.Ex2
       Lib
       Test1.Sol
+      Test2.Sol
+      Test2.TypeChecker
+      Test3.Sol
   other-modules:
       Paths_CI4251
   autogen-modules:
